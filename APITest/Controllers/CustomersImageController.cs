@@ -172,8 +172,43 @@ namespace APITest.Controllers
                     throw;
                 }
             }
+        }
 
-            return NoContent();
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteImage([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentCustomer = _context.Customers.Where(c => c.Id == id);
+            if (currentCustomer.First() == null)
+                return BadRequest();
+
+            try
+            { 
+                if (currentCustomer.First().Image != "" && currentCustomer.First().Image != " " && currentCustomer.First().Image != null)
+                {
+                    string imagePath = currentCustomer.First().Image;
+                    currentCustomer.First().Image = null;
+                    await _context.SaveChangesAsync();
+                    DeleteFile(imagePath);
+                    return Ok("Image removed");
+                }
+                return Ok("Customer without Image");
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!CustomersExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
         public void DeleteFile(string imagePath)
