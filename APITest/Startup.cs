@@ -69,6 +69,9 @@ namespace APITest
                 app.UseHsts();
             }
 
+            app.UseDefaultFiles();
+            app.UseStaticFiles();
+            app.UseMvcWithDefaultRoute();
             app.UseHttpsRedirection();
             app.UseMvc();
         }
