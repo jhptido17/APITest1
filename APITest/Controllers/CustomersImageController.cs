@@ -45,6 +45,7 @@ namespace APITest.Controllers
                 return Content("No image");
             }
             
+            Console.WriteLine("prueba");
       
             Console.WriteLine(Directory.GetCurrentDirectory());
             string fileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
