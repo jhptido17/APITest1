@@ -119,6 +119,11 @@ namespace APITest.Controllers
             if (currentCustomer.First() == null)
                 return BadRequest();
 
+            if (currentCustomer.First().Image != null || currentCustomer.First().Image != "")
+            {
+                DeleteFile(currentCustomer.First().Image);
+            }
+
             currentCustomer.First().Image = filePath;
 
             try
@@ -161,6 +166,19 @@ namespace APITest.Controllers
             }
 
             return NoContent();
+        }
+
+        public void DeleteFile(string imagePath)
+        {
+            string rFileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
+            string rFilePath = ""; //= imagePath.Split("\\")[imagePath.Split("\\").Length - 2];
+            for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
+            {
+                rFilePath = rFilePath + imagePath.Split("\\")[i] + "\\";
+            }
+            string [] dir = Directory.GetFiles(rFilePath, rFileName + "*.*", SearchOption.AllDirectories);
+            Console.WriteLine(dir.First());
+            System.IO.File.Delete(dir.First());
         }
 
         private bool CustomersExists(int id)
