@@ -36,7 +36,7 @@ namespace APITest.Models
                     .IsUnicode(false);
 
                 entity.Property(e => e.Image)
-                    .HasMaxLength(50)
+                    .HasMaxLength(100)
                     .IsUnicode(false);
 
                 entity.Property(e => e.Name)

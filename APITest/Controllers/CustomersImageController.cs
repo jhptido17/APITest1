@@ -25,9 +25,26 @@ namespace APITest.Controllers
 
         //api/CustomersImage/5
         [HttpGet("{id}")]
-        public IEnumerable<Customers> GetImage([FromRoute] int id)
+        public async Task<IActionResult> GetImage([FromRoute] int id)
         {
-            string imagePath = _context.Customers.Where(c => c.Id == id).First().Image;
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentCustomer = _context.Customers.Where(c => c.Id == id);
+
+            if (currentCustomer.First() == null)
+                return BadRequest();
+
+            string imagePath = currentCustomer.First().Image; 
+            Console.WriteLine(imagePath);
+
+            if (imagePath == null || imagePath == "")
+            {
+                return Content("No image");
+            }
+            
       
             Console.WriteLine(Directory.GetCurrentDirectory());
             string fileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
@@ -35,16 +52,39 @@ namespace APITest.Controllers
             for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
             {
                 filePath = filePath + imagePath.Split("\\")[i] + "\\";
+                Console.WriteLine(filePath);
             }
 
             Console.WriteLine(fileName);
             Console.WriteLine(filePath);
 
-            string [] dir = Directory.GetFiles(filePath, fileName + ".png", SearchOption.AllDirectories);
+            string [] dir = Directory.GetFiles(filePath, fileName + "*.*", SearchOption.AllDirectories);
+
+            if (dir == null)
+            {
+                return NoContent();
+            }
+
+            //string [] dir = Directory.GetFiles(imagePath, "*png");
 
             Console.WriteLine(dir.First());
 
-            return _context.Customers;
+            var memory = new MemoryStream();
+            using (var stream = new FileStream(dir.First(), FileMode.Open))
+            {
+                await stream.CopyToAsync(memory);
+            }
+            memory.Position = 0;
+            return File(memory, GetContentType(dir.First()), Path.GetFileName(dir.First()));
+
+            //return _context.Customers;
+        }
+
+        private string GetContentType(string file)
+        {
+            var fileExtension = "." +file.Split('.')[file.Split('.').Length - 1];
+            Console.WriteLine("image/" + fileExtension.TrimStart('.'));
+            return "image/" + fileExtension.TrimStart('.');
         }
 
         /*[HttpPost("{id}")]
@@ -55,6 +95,7 @@ namespace APITest.Controllers
             return Ok();
         }*/
 
+        //api/CustomersImage/5
         [HttpPost("{id}")]
         public async Task<IActionResult> PostImage([FromRoute] int id, IFormFile file /*[FromBody] List<IFormFile> files*/)
         {
@@ -76,7 +117,7 @@ namespace APITest.Controllers
             }
 
             // full path to file in temp location
-            var filePath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
+            var filePath = Path.Combine(Directory.GetCurrentDirectory() + "\\UserImages", Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
 
             Console.WriteLine("______________Voy a insertar imagen____________" + filePath + "_______________");

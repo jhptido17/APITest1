@@ -259,3 +259,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
+/APITest/UserImages/vmo34ppz.jpg
+/APITest/UserImages/4rtqwexp.png
