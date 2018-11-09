@@ -108,6 +108,14 @@ namespace APITest.Controllers
                 return NoContent();
             }
 
+            Console.WriteLine(Directory.GetCurrentDirectory());
+            Console.WriteLine(Directory.GetCurrentDirectory() + "\\UserImages");
+            if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\UserImages"))
+            {
+                
+                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\UserImages");
+            }
+
             // full path to file in temp location
             var filePath = Path.Combine(Directory.GetCurrentDirectory() + "\\UserImages", Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
@@ -119,7 +127,7 @@ namespace APITest.Controllers
             if (currentCustomer.First() == null)
                 return BadRequest();
 
-            if (currentCustomer.First().Image != null || currentCustomer.First().Image != "")
+            if (currentCustomer.First().Image != "" && currentCustomer.First().Image != " " && currentCustomer.First().Image != null)
             {
                 DeleteFile(currentCustomer.First().Image);
             }
