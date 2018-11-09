@@ -38,14 +38,11 @@ namespace APITest.Controllers
                 return BadRequest();
 
             string imagePath = currentCustomer.First().Image; 
-            Console.WriteLine(imagePath);
 
             if (imagePath == null || imagePath == "")
             {
                 return Content("No image");
             }
-            
-            Console.WriteLine("prueba");
       
             Console.WriteLine(Directory.GetCurrentDirectory());
             string fileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
@@ -53,11 +50,7 @@ namespace APITest.Controllers
             for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
             {
                 filePath = filePath + imagePath.Split("\\")[i] + "\\";
-                Console.WriteLine(filePath);
             }
-
-            Console.WriteLine(fileName);
-            Console.WriteLine(filePath);
 
             string [] dir = Directory.GetFiles(filePath, fileName + "*.*", SearchOption.AllDirectories);
 
@@ -67,8 +60,6 @@ namespace APITest.Controllers
             }
 
             //string [] dir = Directory.GetFiles(imagePath, "*png");
-
-            Console.WriteLine(dir.First());
 
             var memory = new MemoryStream();
             using (var stream = new FileStream(dir.First(), FileMode.Open))
@@ -121,7 +112,7 @@ namespace APITest.Controllers
             var filePath = Path.Combine(Directory.GetCurrentDirectory() + "\\UserImages", Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
 
-            Console.WriteLine("______________Voy a insertar imagen____________" + filePath + "_______________");
+            Console.WriteLine("______________InserImage into____________" + filePath + "_______________");
             Console.WriteLine(filePath + fileExtension);
 
             var currentCustomer = _context.Customers.Where(c => c.Id == id);
