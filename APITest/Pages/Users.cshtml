@@ -12,6 +12,39 @@
     <title>Users</title>
 </head>
 <body>
-    <p>Prueba2</p>
+    <form method="post" asp-action="OnPostShowUsers">
+            @Html.AntiForgeryToken()
+            <button class="btn btn-default">View</button>
+    </form>
+    <table class="table table-dark">
+        <thead>
+            <tr>
+                <th scope="col">#</th>
+                <th scope="col">Username</th>
+                <th scope="col">Password</th>
+                <th scope="col">Role</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if(Model.json != null)
+            {
+                @foreach(var data in Model.json)
+                {
+                    <tr>
+                        <th scope="row">@data.Id</th>
+                        <td>@data.Username</td>
+                        <td>@data.Password</td>
+                        <td>@data.Role</td>
+                        <td>@data.Status</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                
+            }
+        </tbody>
+    </table>
 </body>
 </html>
