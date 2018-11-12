@@ -55,7 +55,11 @@
                         <td>@data.Username</td>
                         <td>@data.Password</td>
                         <td>@data.Role</td>
-                        <td><form method="post"><button type="submit" asp-page-handler="DeleteUsers" class="btn btn-default">Delete</button></form></td>
+                        <td>
+                            <form method="post" asp-page-handler="DeleteUsers" asp-route-id=@data.Id>
+                                <button type="submit" class="btn btn-default">Delete</button>
+                            </form>
+                        </td>
                         @*<td>@data.Status</td>*@
                     </tr>
                 }

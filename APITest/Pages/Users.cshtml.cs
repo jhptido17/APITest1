@@ -79,9 +79,30 @@ namespace APITest.Pages
             }
         }
 
-        public void OnPostDeleteUsers()
+        public void OnPostDeleteUsers(int id)
         {
+            Console.WriteLine("la id a borrar es: " + id);
             Console.WriteLine("prueba de borrado");
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            string username = "user1";
+            string password = "1234";
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            var response = client.DeleteAsync("users/" + id);
+            response.Wait();
+            if (response.Result.IsSuccessStatusCode)
+            {
+                OnGetShowUsers();
+                RedirectToPage("/Users");
+            }
+            else
+            {
+                errorMsg = "Error: User not deleted";
+                OnGetShowUsers();
+                RedirectToPage("/Users");
+            }
             OnGetShowUsers();
             RedirectToPage("/Users");
         }
