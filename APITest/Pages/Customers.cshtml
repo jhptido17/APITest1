@@ -1,5 +1,6 @@
-﻿@page
+﻿@page "{handler?}"
 @model CustomersModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "_Layout";
 }
@@ -12,6 +13,32 @@
     <title>Customers</title>
 </head>
 <body>
-    <p>Prueba3</p>
+    <form method="get"> @*asp-action="OnPostShowUsers"*@
+            @Html.AntiForgeryToken()
+            <button type="submit" asp-page-handler="ShowCustomers" class="btn btn-default">View</button>
+    </form>
+    <form method="post">
+        <div class="row">
+            <div class="col-md-2">
+                <input type="image" class="form-control" name="image" placeholder="Image">
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="name" placeholder="Name">
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="surname" placeholder="Surname">
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="createdby" placeholder="CreatedBy">
+            </div>
+            <div class="col-md-2">
+                <input type="text" class="form-control" name="updateby" placeholder="UpdateBy">
+            </div>
+            <div class="col">
+                <button type="submit" asp-page-handler="Users" class="btn btn-default">Add</button>
+            </div>
+        </div>
+    </form>
+
 </body>
 </html>
