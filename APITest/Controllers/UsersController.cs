@@ -22,14 +22,14 @@ namespace APITest.Controllers
             _context = context;
         }
 
-        // GET: api/Test
+        // GET: api/users
         [HttpGet]
         public IEnumerable<Users> GetUsers()
         {
             return _context.Users;
         }
 
-        // GET: api/Test/5
+        // GET: api/users/5
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUsers([FromRoute] int id)
         {
@@ -48,7 +48,7 @@ namespace APITest.Controllers
             return Ok(users);
         }
 
-        // PUT: api/Test/5
+        // PUT: api/users/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUsers([FromRoute] int id, [FromBody] Users users)
         {
@@ -83,7 +83,7 @@ namespace APITest.Controllers
             return NoContent();
         }
 
-        // POST: api/Test
+        // POST: api/users
         [HttpPost]
         public async Task<IActionResult> PostUsers([FromBody] Users users)
         {
@@ -98,7 +98,7 @@ namespace APITest.Controllers
             return CreatedAtAction("GetUsers", new { id = users.Id }, users);
         }
 
-        // DELETE: api/Test/5
+        // DELETE: api/users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUsers([FromRoute] int id)
         {
