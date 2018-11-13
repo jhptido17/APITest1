@@ -1,5 +1,6 @@
-﻿@page
+﻿@page "{handler?}"
 @model IndexModel
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
     Layout = "_Layout";
 }
@@ -12,6 +13,19 @@
     <title>Index</title>
 </head>
 <body>
-    <p>Prueba</p>
+    <div class="container">
+        <h2>Login form</h2>
+        <form>
+            <div class="form-group">
+                <label for="exampleInputEmail1">UserName</label>
+                <input type="text" class="form-control" id="username" aria-describedby="UserName" placeholder="UserName">
+            </div>
+            <div class="form-group">
+                <label for="exampleInputPassword1">Password</label>
+                <input type="password" class="form-control" id="password" placeholder="Password">
+            </div>
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </form>
+    </div>
 </body>
 </html>
