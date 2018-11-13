@@ -114,20 +114,18 @@ namespace APITest.Controllers
                 return NoContent();
             }
 
-            var directory = _hostingEnvironment.WebRootPath + _configuration.GetSection("ImagesDirectory").Value;
-            
+            var directory = _hostingEnvironment.WebRootPath;
+            var directoryDB = _configuration.GetSection("ImagesDirectory").Value; ;
+
             if (!Directory.Exists(directory))
             {
                 Directory.CreateDirectory(directory);
             }
 
             // full path to file in temp location
-            var filePath = Path.Combine(directory, Path.GetRandomFileName());
+            var filePath = Path.Combine(directoryDB, Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
-
-            Console.WriteLine("______________InserImage into____________" + filePath + "_______________");
-            Console.WriteLine(filePath + fileExtension);
-
+            filePath = filePath + fileExtension;
             var currentCustomer = _context.Customers.Where(c => c.Id == id);
             if (currentCustomer.First() == null)
                 return BadRequest();
@@ -144,7 +142,7 @@ namespace APITest.Controllers
                 await _context.SaveChangesAsync();
                 if (file.Length > 0)
                 {
-                    using (var stream = new FileStream(filePath + fileExtension, FileMode.Create))
+                    using (var stream = new FileStream(directory + filePath, FileMode.Create))
                     {
                         await file.CopyToAsync(stream);
                     }
@@ -163,7 +161,7 @@ namespace APITest.Controllers
                 // process uploaded files
                 // Don't rely on or trust the FileName property without validation.
 
-                return Ok(new { size, filePath});
+                return Ok(new { size, filePath });
                 /*return Ok(new { count = files.Count, size, filePath});*/
             }
             catch (DbUpdateConcurrencyException)
@@ -218,6 +216,7 @@ namespace APITest.Controllers
 
         public void DeleteFile(string imagePath)
         {
+            imagePath = _hostingEnvironment.WebRootPath + imagePath;
             string rFileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
             string rFilePath = ""; //= imagePath.Split("\\")[imagePath.Split("\\").Length - 2];
             for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
