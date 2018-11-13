@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using APITest.Models;
 using Microsoft.AspNetCore.Authorization;
 using System.IO;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Hosting;
 
 namespace APITest.Controllers
 {
@@ -17,10 +19,14 @@ namespace APITest.Controllers
     public class CustomersImageController : ControllerBase
     {
         private readonly TheCRMserviceContext _context;
+        private readonly IConfiguration _configuration;
+        private readonly IHostingEnvironment _hostingEnvironment;
 
-        public CustomersImageController(TheCRMserviceContext context)
+        public CustomersImageController(TheCRMserviceContext context, IConfiguration configuration, IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _configuration = configuration;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         //api/CustomersImage/5
@@ -108,16 +114,15 @@ namespace APITest.Controllers
                 return NoContent();
             }
 
-            Console.WriteLine(Directory.GetCurrentDirectory());
-            Console.WriteLine(Directory.GetCurrentDirectory() + "\\UserImages");
-            if (!Directory.Exists(Directory.GetCurrentDirectory() + "\\UserImages"))
+            var directory = _hostingEnvironment.WebRootPath + _configuration.GetSection("ImagesDirectory").Value;
+            
+            if (!Directory.Exists(directory))
             {
-                
-                Directory.CreateDirectory(Directory.GetCurrentDirectory() + "\\UserImages");
+                Directory.CreateDirectory(directory);
             }
 
             // full path to file in temp location
-            var filePath = Path.Combine(Directory.GetCurrentDirectory() + "\\UserImages", Path.GetRandomFileName());
+            var filePath = Path.Combine(directory, Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
 
             Console.WriteLine("______________InserImage into____________" + filePath + "_______________");

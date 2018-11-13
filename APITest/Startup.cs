@@ -34,6 +34,7 @@ namespace APITest
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             var connection = @"Server=(localdb)\mssqllocaldb;Database=TheCRMservice;Trusted_Connection=True;ConnectRetryCount=0";
+            //var connection = @"Server=(localdb)\ProjectsV13;Database=TheCRMservice;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<TheCRMserviceContext>(options => options.UseSqlServer(connection));
 
             services.AddAuthentication("BasicAuthentication").AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>("BasicAuthentication", null);
