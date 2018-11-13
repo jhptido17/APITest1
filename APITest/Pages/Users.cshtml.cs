@@ -39,7 +39,7 @@ namespace APITest.Pages
 	        {
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<IEnumerable<Users>>(result);
-                RedirectToPage("/Users");
+                //RedirectToPage("/Users");
 	        }
         }
 
@@ -69,13 +69,13 @@ namespace APITest.Pages
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowUsers();
-                RedirectToPage("/Users");
+                //RedirectToPage("/Users");
             }
             else
-            {
-                errorMsg = "Error: User not added";
+            {   
+                errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
                 OnGetShowUsers();
-                RedirectToPage("/Users");
+                //RedirectToPage("/Users");
             }
         }
 
@@ -95,16 +95,16 @@ namespace APITest.Pages
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowUsers();
-                RedirectToPage("/Users");
+                //RedirectToPage("/Users");
             }
             else
             {
                 errorMsg = "Error: User not deleted";
                 OnGetShowUsers();
-                RedirectToPage("/Users");
+                //RedirectToPage("/Users");
             }
             OnGetShowUsers();
-            RedirectToPage("/Users");
+            //RedirectToPage("/Users");
         }
     }
 }

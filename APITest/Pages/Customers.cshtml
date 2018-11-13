@@ -20,9 +20,6 @@
     <form method="post">
         <div class="row">
             <div class="col-md-2">
-                <input type="image" class="form-control" name="image" placeholder="Image">
-            </div>
-            <div class="col-md-2">
                 <input type="text" class="form-control" name="name" placeholder="Name">
             </div>
             <div class="col-md-2">
@@ -35,10 +32,60 @@
                 <input type="text" class="form-control" name="updateby" placeholder="UpdateBy">
             </div>
             <div class="col">
-                <button type="submit" asp-page-handler="Users" class="btn btn-default">Add</button>
+                <button type="submit" asp-page-handler="Customers" class="btn btn-default">Add</button>
             </div>
         </div>
     </form>
-
+    <p>@Model.errorMsg</p>
+    @if(Model.json != null)
+    {
+        <table class="table table-dark">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Surname</th>
+                    <th scope="col">CreateBy</th>
+                    <th scope="col">UpdateBy</th>
+                    @*<th scope="col">Status</th>*@
+                </tr>
+            </thead>
+            <tbody>
+            
+                @foreach(var data in Model.json)
+                {
+                    <tr>
+                        <th scope="row">@data.Id</th>
+                        <td>@data.Name</td>
+                        <td>@data.Surname</td>
+                        <td>@data.CreatedBy</td>
+                        <td>@data.UpdateBy</td>
+                        <td>
+                            <form method="post" asp-page-handler="ShowImage" asp-route-id="@data.Id">
+                                <button type="submit" class="btn btn-default">ShowImage</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-page-handler="DeleteCustomer" asp-route-id=@data.Id>
+                                <button type="submit" class="btn btn-default">Delete</button>
+                            </form>
+                        </td>
+                        <td>
+                            <form method="post" asp-page="./EditCustomer" asp-page-handler="ShowUser" asp-route-id=@data.Id>
+                                <button type="submit" class="btn btn-default">Edit</button>
+                            </form>
+                        </td>
+                        @*<td>@data.Status</td>*@
+                    </tr>
+                }
+            
+           
+            </tbody>
+        </table>
+    }
+    else
+    {
+           <p>Please click the View button to get a users list</p>     
+    }
 </body>
 </html>

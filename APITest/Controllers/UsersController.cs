@@ -55,14 +55,18 @@ namespace APITest.Controllers
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
-
-            if (id != users.Id)
-            {
+            }  
+            if((_context.Users.Where(c => c.Id != id && c.Username == users.Username)).Count() > 0)
+                return BadRequest("Username Already Used");
+            var currentUser = _context.Users.Where(c => c.Id == id);
+            if (currentUser.First() == null)
                 return BadRequest();
-            }
+            
+            currentUser.First().Username = users.Username;
+            currentUser.First().Password = users.Password;
+            currentUser.First().Role = users.Role;
 
-            _context.Entry(users).State = EntityState.Modified;
+            //_context.Entry(currentUser).State = EntityState.Modified;
 
             try
             {
@@ -82,9 +86,25 @@ namespace APITest.Controllers
 
             return NoContent();
         }
+        
+
+        [HttpPost]
+        public async Task<IActionResult> PostUsers([FromBody] Users users)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }  
+            if((_context.Users.Where(c => c.Username == users.Username)).Count() > 0)
+                return BadRequest("Username Already Used");
+             _context.Users.Add(users);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction("GetUsers", new { id = users.Id }, users);
+        }
 
         // POST: api/users
-        [HttpPost]
+        /*[HttpPost]
         public async Task<IActionResult> PostUsers([FromBody] Users users)
         {
             if (!ModelState.IsValid)
@@ -96,7 +116,7 @@ namespace APITest.Controllers
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetUsers", new { id = users.Id }, users);
-        }
+        }*/
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]
