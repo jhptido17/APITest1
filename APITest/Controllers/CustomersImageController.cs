@@ -43,6 +43,29 @@ namespace APITest.Controllers
             if (currentCustomer.First() == null)
                 return BadRequest();
 
+            string imagePath = currentCustomer.First().Image;
+
+            if (imagePath == null || imagePath == "")
+            {
+                return Content("No image");
+            }
+            return Ok(imagePath);
+        }
+
+        //api/CustomersImage/5
+        /*[HttpGet("{id}")]
+        public async Task<IActionResult> GetImage([FromRoute] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var currentCustomer = _context.Customers.Where(c => c.Id == id);
+
+            if (currentCustomer.First() == null)
+                return BadRequest();
+
             string imagePath = currentCustomer.First().Image; 
 
             if (imagePath == null || imagePath == "")
@@ -83,14 +106,6 @@ namespace APITest.Controllers
             var fileExtension = "." +file.Split('.')[file.Split('.').Length - 1];
             Console.WriteLine("image/" + fileExtension.TrimStart('.'));
             return "image/" + fileExtension.TrimStart('.');
-        }
-
-        /*[HttpPost("{id}")]
-        public async Task<IActionResult> PostImage([FromRoute] int id, List<IFormFile> files)
-        {
-            Console.WriteLine("Esta es la id: " + id);
-            Console.WriteLine("Ruta de imagen: " + Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
-            return Ok();
         }*/
 
         //api/CustomersImage/5
@@ -117,9 +132,9 @@ namespace APITest.Controllers
             var directory = _hostingEnvironment.WebRootPath;
             var directoryDB = _configuration.GetSection("ImagesDirectory").Value; ;
 
-            if (!Directory.Exists(directory))
+            if (!Directory.Exists(directory+directoryDB))
             {
-                Directory.CreateDirectory(directory);
+                Directory.CreateDirectory(directory+directoryDB);
             }
 
             // full path to file in temp location
@@ -135,6 +150,7 @@ namespace APITest.Controllers
                 DeleteFile(currentCustomer.First().Image);
             }
 
+            currentCustomer.First().UpdateBy = User.Identity.Name;
             currentCustomer.First().Image = filePath;
 
             try

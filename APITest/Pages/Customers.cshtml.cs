@@ -9,6 +9,8 @@ using Newtonsoft.Json;
 using APITest.Models;
 using System.Net.Http.Headers;
 using System.IO;
+using Microsoft.AspNetCore.Http;
+using System.Net.Http.Formatting;
 
 namespace APITest.Pages
 {
@@ -17,10 +19,8 @@ namespace APITest.Pages
         public IEnumerable<Customers> json;
         public string errorMsg;
 
-        public void OnGet()
-        {
-
-        }
+        [BindProperty]
+        public IFormFile Upload { get; set; }
 
         public void OnGetShowCustomers()
         {
@@ -38,11 +38,101 @@ namespace APITest.Pages
 	        {
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<IEnumerable<Customers>>(result);
-                //RedirectToPage("/Users");
 	        }
+            else
+            {
+                errorMsg = response.Result.Content.ReadAsStringAsync().Result;
+            }
         }
 
-        public async Task<ActionResult> OnPostShowImage(int id)
+        public void OnPostCustomers()
+        {
+            if(Request.Form["name"] == "" && Request.Form["surname"] == "")
+            {
+                errorMsg = "name and surname are required";
+                OnGetShowCustomers();
+                //RedirectToPage("/Customers");
+                return;
+            }
+            var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            string username = "user1";
+            string password = "1234";
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+            var response = client.PostAsync<Customers>("customers", content, formatter);
+            response.Wait();
+
+            if (response.Result.IsSuccessStatusCode)
+            {
+                OnGetShowCustomers();
+                //RedirectToPage("/Users");
+            }
+            else
+            {   
+                errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                OnGetShowCustomers();
+                //RedirectToPage("/Users");
+            }
+        }
+
+        public void OnPostDeleteCustomer(int id)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            string username = "user1";
+            string password = "1234";
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            var response = client.DeleteAsync("customers/" + id);
+            response.Wait();
+            if (response.Result.IsSuccessStatusCode)
+            {
+                OnGetShowCustomers();
+                //RedirectToPage("/Users");
+            }
+            else
+            {
+                errorMsg = "Error: Customer not deleted";
+                OnGetShowCustomers();
+                //RedirectToPage("/Users");
+            }
+            OnGetShowCustomers();
+            //RedirectToPage("/Users");
+        }
+
+        public void OnPostDeleteImage(int id)
+        {
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            string username = "user1";
+            string password = "1234";
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.MaxResponseContentBufferSize = 256000;
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            var response = client.DeleteAsync("customersimage/"+id);
+            response.Wait();
+            if (response.Result.IsSuccessStatusCode)
+            {
+                errorMsg = response.Result.Content.ReadAsStringAsync().Result;
+                OnGetShowCustomers();
+                //return RedirectToPage("/Customers");   
+            }
+            else
+            {
+                errorMsg = "Error: Photo not deleted";
+                OnGetShowCustomers();
+                //return RedirectToPage("/Customers");
+            }
+        }
+
+        public async Task<IActionResult> OnPostShowImage(int id)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
@@ -54,27 +144,47 @@ namespace APITest.Pages
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var response = client.GetAsync("customersimage/"+id);
-            Console.WriteLine("_________________________________Imagen: " + response.Result.Content);
             
             if (response.Result.IsSuccessStatusCode)
             {
-                var contentStream = response.Result.Content.ReadAsStreamAsync().Result;
-                //new File(contentStream, "image/jpeg");
+                var contentString = response.Result.Content.ReadAsStringAsync().Result.Replace("\\\\","/").Replace("\"","");
+                Console.WriteLine("____________________________Image2: " + contentString);
+                OnGetShowCustomers();
                 
-                //MemoryStream imageData = new MemoryStream(contentStream)
-                Console.WriteLine("____________________________Image2: " +  File(contentStream, "image/jpeg"));
-                //System.Net.Http.HttpContent content = response.Result.Content;
-                //var contentStream = await content.ReadAsStreamAsync(); // get the actual content stream
-                //return File(contentStream, GetContentType());
+                return Redirect(contentString);
             }
+            errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
+            OnGetShowCustomers();
             return RedirectToPage("/Customers");
         }
 
-        private string GetContentType(string file)
+        public void OnPostAddImage(int id)
         {
-            var fileExtension = "." +file.Split('.')[file.Split('.').Length - 1];
-            Console.WriteLine("image/" + fileExtension.TrimStart('.'));
-            return "image/" + fileExtension.TrimStart('.');
+            var client = new HttpClient();
+            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            string username = "user1";
+            string password = "1234";
+            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
+            client.DefaultRequestHeaders.Accept.Clear();
+            client.MaxResponseContentBufferSize = 256000;
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            byte[] data;
+            using (var br = new BinaryReader(Upload.OpenReadStream()))
+                data = br.ReadBytes((int)Upload.OpenReadStream().Length);
+            ByteArrayContent bytes = new ByteArrayContent(data);
+            MultipartFormDataContent content = new MultipartFormDataContent();
+            content.Add(bytes, "file", Upload.FileName);
+            var response = client.PostAsync("customersimage/"+id, content);
+            if (response.Result.IsSuccessStatusCode)
+            {
+                Console.WriteLine("__________________________________Good Upload: ");
+                errorMsg = "Image Upload to Customer with Id: " + id;
+                OnGetShowCustomers();
+               // return RedirectToPage("/Customers");
+            }
+            errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
+            OnGetShowCustomers();
+            //return RedirectToPage("/Customers");
         }
     }
 }

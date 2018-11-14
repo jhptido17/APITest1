@@ -8,84 +8,96 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Customers</title>
-</head>
-<body>
-    <form method="get"> @*asp-action="OnPostShowUsers"*@
-            @Html.AntiForgeryToken()
-            <button type="submit" asp-page-handler="ShowCustomers" class="btn btn-default">View</button>
-    </form>
-    <form method="post">
-        <div class="row">
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="name" placeholder="Name">
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Customers</title>
+    </head>
+    <body>
+        <form method="get"> @*asp-action="OnPostShowUsers"*@
+                @Html.AntiForgeryToken()
+                <button type="submit" asp-page-handler="ShowCustomers" class="btn btn-default">View</button>
+        </form>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="name" placeholder="Name">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="surname" placeholder="Surname">
+                </div>
+                <div class="col">
+                    <button type="submit" asp-page-handler="Customers" class="btn btn-default">Add</button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="surname" placeholder="Surname">
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="createdby" placeholder="CreatedBy">
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="updateby" placeholder="UpdateBy">
-            </div>
-            <div class="col">
-                <button type="submit" asp-page-handler="Customers" class="btn btn-default">Add</button>
-            </div>
-        </div>
-    </form>
-    <p>@Model.errorMsg</p>
-    @if(Model.json != null)
-    {
-        <table class="table table-dark">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Name</th>
-                    <th scope="col">Surname</th>
-                    <th scope="col">CreateBy</th>
-                    <th scope="col">UpdateBy</th>
-                    @*<th scope="col">Status</th>*@
-                </tr>
-            </thead>
-            <tbody>
-            
-                @foreach(var data in Model.json)
-                {
+        </form>
+        <p>@Model.errorMsg</p>
+        @if(Model.json != null)
+        {
+            <table class="table">
+                <thead class="thead-dark">
                     <tr>
-                        <th scope="row">@data.Id</th>
-                        <td>@data.Name</td>
-                        <td>@data.Surname</td>
-                        <td>@data.CreatedBy</td>
-                        <td>@data.UpdateBy</td>
-                        <td>
-                            <form method="post" asp-page-handler="ShowImage" asp-route-id="@data.Id">
-                                <button type="submit" class="btn btn-default">ShowImage</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form method="post" asp-page-handler="DeleteCustomer" asp-route-id=@data.Id>
-                                <button type="submit" class="btn btn-default">Delete</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form method="post" asp-page="./EditCustomer" asp-page-handler="ShowUser" asp-route-id=@data.Id>
-                                <button type="submit" class="btn btn-default">Edit</button>
-                            </form>
-                        </td>
-                        @*<td>@data.Status</td>*@
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Surname</th>
+                        <th scope="col">CreateBy</th>
+                        <th scope="col">UpdateBy</th>
+                        <th scope="col">ImageRoot</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        @*<th scope="col">Status</th>*@
                     </tr>
-                }
+                </thead>
+                <tbody>
+            
+                    @foreach(var data in Model.json)
+                    {
+                        <tr>
+                            <th scope="row">@data.Id</th>
+                            <td>@data.Name</td>
+                            <td>@data.Surname</td>
+                            <td>@data.CreatedBy</td>
+                            <td>@data.UpdateBy</td>
+                            <td>@data.Image</td>
+                            <td>
+                                <form method="post" asp-page-handler="ShowImage" asp-route-id="@data.Id">
+                                    <button type="submit" class="btn btn-default">ShowPhoto</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" enctype= "multipart/form-data" asp-page-handler="AddImage" asp-route-id="@data.Id">
+                                    <input type="file" asp-for="Upload"/>
+                                    <button type="submit" class="btn btn-default">AddPhoto</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" asp-page-handler="DeleteImage" asp-route-id="@data.Id">
+                                    <button type="submit" class="btn btn-default">RemovePhoto</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" asp-page-handler="DeleteCustomer" asp-route-id=@data.Id>
+                                    <button type="submit" class="btn btn-default">Delete</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" asp-page="./EditCustomer" asp-page-handler="ShowCustomer" asp-route-id=@data.Id>
+                                    <button type="submit" class="btn btn-default">Edit</button>
+                                </form>
+                            </td>
+                            @*<td>@data.Status</td>*@
+                        </tr>
+                    }
             
            
-            </tbody>
-        </table>
-    }
-    else
-    {
-           <p>Please click the View button to get a users list</p>     
-    }
-</body>
+                </tbody>
+            </table>
+        }
+        else
+        {
+               <p>Please click the View button to get a users list</p>     
+        }
+    </body>
 </html>

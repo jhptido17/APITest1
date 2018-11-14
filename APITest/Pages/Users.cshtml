@@ -8,74 +8,74 @@
 <!DOCTYPE html>
 
 <html>
-<head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Users</title>
-</head>
-<body>
-    <form method="get"> @*asp-action="OnPostShowUsers"*@
-            @Html.AntiForgeryToken()
-            <button type="submit" asp-page-handler="ShowUsers" class="btn btn-default">View</button>
-    </form>
-    <form method="post">
-        <div class="row">
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="username" placeholder="Username">
+    <head>
+        <meta name="viewport" content="width=device-width" />
+        <title>Users</title>
+    </head>
+    <body>
+        <form method="get"> @*asp-action="OnPostShowUsers"*@
+                @Html.AntiForgeryToken()
+                <button type="submit" asp-page-handler="ShowUsers" class="btn btn-default">View</button>
+        </form>
+        <form method="post">
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="username" placeholder="Username">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="password" placeholder="Password">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="role" placeholder="Role">
+                </div>
+                <div class="col">
+                    <button type="submit" asp-page-handler="Users" class="btn btn-default">Add</button>
+                </div>
             </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="password" placeholder="Password">
-            </div>
-            <div class="col-md-2">
-                <input type="text" class="form-control" name="role" placeholder="Role">
-            </div>
-            <div class="col">
-                <button type="submit" asp-page-handler="Users" class="btn btn-default">Add</button>
-            </div>
-        </div>
-    </form>
-    <p>@Model.errorMsg</p>
-    @if(Model.json != null)
-    {
-        <table class="table table-dark">
-            <thead>
-                <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Username</th>
-                    <th scope="col">Password</th>
-                    <th scope="col">Role</th>
-                    @*<th scope="col">Status</th>*@
-                </tr>
-            </thead>
-            <tbody>
-            
-                @foreach(var data in Model.json)
-                {
+        </form>
+        <p>@Model.errorMsg</p>
+        @if(Model.json != null)
+        {
+            <table class="table">
+                <thead class="thead-dark">
                     <tr>
-                        <th scope="row">@data.Id</th>
-                        <td>@data.Username</td>
-                        <td>@data.Password</td>
-                        <td>@data.Role</td>
-                        <td>
-                            <form method="post" asp-page-handler="DeleteUsers" asp-route-id=@data.Id>
-                                <button type="submit" class="btn btn-default">Delete</button>
-                            </form>
-                        </td>
-                        <td>
-                            <form method="post" asp-page="./EditUser" asp-page-handler="ShowUser" asp-route-id=@data.Id>
-                                <button type="submit" class="btn btn-default">Edit</button>
-                            </form>
-                        </td>
-                        @*<td>@data.Status</td>*@
+                        <th scope="col">#</th>
+                        <th scope="col">Username</th>
+                        <th scope="col">Password</th>
+                        <th scope="col">Role</th>
+                        <th scope="col"></th>
+                        <th scope="col"></th>
+                        @*<th scope="col">Status</th>*@
                     </tr>
-                }
+                </thead>
+                <tbody>
             
-           
-            </tbody>
-        </table>
-    }
-    else
-    {
-           <p>Please click the View button to get a users list</p>     
-    }
-</body>
+                    @foreach(var data in Model.json)
+                    {
+                        <tr>
+                            <th scope="row">@data.Id</th>
+                            <td>@data.Username</td>
+                            <td>@data.Password</td>
+                            <td>@data.Role</td>
+                            <td>
+                                <form method="post" asp-page-handler="DeleteUsers" asp-route-id=@data.Id>
+                                    <button type="submit" class="btn btn-default">Delete</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" asp-page="./EditUser" asp-page-handler="ShowUser" asp-route-id=@data.Id>
+                                    <button type="submit" class="btn btn-default">Edit</button>
+                                </form>
+                            </td>
+                            @*<td>@data.Status</td>*@
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>Please click the View button to get a users list</p>     
+        }
+    </body>
 </html>

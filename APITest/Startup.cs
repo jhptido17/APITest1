@@ -33,6 +33,9 @@ namespace APITest
             services.AddCors();
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
+            services.AddDistributedMemoryCache(); // Adds a default in-memory implementation of IDistributedCache
+            services.AddSession();
+
             var connection = @"Server=(localdb)\mssqllocaldb;Database=TheCRMservice;Trusted_Connection=True;ConnectRetryCount=0";
             //var connection = @"Server=(localdb)\ProjectsV13;Database=TheCRMservice;Trusted_Connection=True;ConnectRetryCount=0";
             services.AddDbContext<TheCRMserviceContext>(options => options.UseSqlServer(connection));
@@ -60,6 +63,7 @@ namespace APITest
                 .AllowCredentials());
 
             app.UseAuthentication();
+            app.UseSession();
 
             if (env.IsDevelopment())
             {
