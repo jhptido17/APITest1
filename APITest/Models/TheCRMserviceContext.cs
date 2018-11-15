@@ -1,18 +1,22 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.Extensions.Configuration;
 
 namespace APITest.Models
 {
     public partial class TheCRMserviceContext : DbContext
     {
+        private readonly IConfiguration _configuration;
+
         public TheCRMserviceContext()
-        {
+        {           
         }
 
-        public TheCRMserviceContext(DbContextOptions<TheCRMserviceContext> options)
+        public TheCRMserviceContext(DbContextOptions<TheCRMserviceContext> options, IConfiguration configuration)
             : base(options)
         {
+            _configuration = configuration;
         }
 
         public virtual DbSet<Customers> Customers { get; set; }
@@ -23,8 +27,7 @@ namespace APITest.Models
             if (!optionsBuilder.IsConfigured)
             {
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                optionsBuilder.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=TheCRMservice;Trusted_Connection=True;");
-                //optionsBuilder.UseSqlServer("Server=(localdb)\\ProjectsV13;Database=TheCRMservice;Trusted_Connection=True;");
+                optionsBuilder.UseSqlServer(_configuration.GetConnectionString("LocalDB"));
             }
         }
 
