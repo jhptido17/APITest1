@@ -26,14 +26,13 @@ namespace APITest.Controllers
         [AllowAnonymous]
         //[HttpPost("authenticate")]
         [HttpPost]
-        public async Task<IActionResult> Authenticate([FromForm] Users userParam)
+        public async Task<IActionResult> Authenticate([FromBody] Users userParam)
         {
-            Console.WriteLine("jdfskldjflskjl " + userParam.Username + " " + userParam.Password + " ldjflsdjflksjdlfjañls");
             var user = await _userService.Authenticate(userParam.Username, userParam.Password);
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest("Username or password is incorrect");
             user.Password = null;
-            return Ok(user);
+            return Ok("Access Granted");
         }
 
         [HttpGet]

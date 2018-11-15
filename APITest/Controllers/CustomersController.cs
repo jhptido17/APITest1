@@ -80,14 +80,27 @@ namespace APITest.Controllers
             var currentCustomer = _context.Customers.Where(c => c.Id == id);
             if (currentCustomer.First() == null)
                 return BadRequest();
-            //currentCustomer.First().Id = customers.Id;
-            currentCustomer.First().Name = customers.Name;
-            currentCustomer.First().Surname = customers.Surname;
-            currentCustomer.First().UpdateBy = User.Identity.Name;
-            //currentCustomer.First().CreatedBy = currentCustomer.First().CreatedBy;
 
-            //customers.CreatedBy = GetCustomerCreatedBy(id);
-            //customers.UpdateBy = User.Identity.Name;
+            if (customers.Name == null && customers.Surname == null)
+            {
+                currentCustomer.First().UpdateBy = User.Identity.Name;
+            }
+            else if(customers.Name == null && customers.Surname != null)
+            {
+                currentCustomer.First().Surname = customers.Surname;
+                currentCustomer.First().UpdateBy = User.Identity.Name;
+            }
+            else if(customers.Surname == null && customers.Name != null)
+            {
+                currentCustomer.First().Name = customers.Name;
+                currentCustomer.First().UpdateBy = User.Identity.Name;
+            }
+            else
+            {
+                currentCustomer.First().Name = customers.Name;
+                currentCustomer.First().Surname = customers.Surname;
+                currentCustomer.First().UpdateBy = User.Identity.Name;
+            }
 
             //_context.Entry(currentCustomer).State = EntityState.Modified;
 

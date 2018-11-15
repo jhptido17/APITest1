@@ -62,9 +62,38 @@ namespace APITest.Controllers
             if (currentUser.First() == null)
                 return BadRequest();
             
-            currentUser.First().Username = users.Username;
-            currentUser.First().Password = users.Password;
-            currentUser.First().Role = users.Role;
+            if (users.Username == null && users.Password == null)
+            {
+                currentUser.First().Role = users.Role;
+            }
+            else if(users.Username == null && users.Role == null)
+            {
+                currentUser.First().Password = users.Password;
+            }
+            else if (users.Password == null && users.Role == null)
+            {
+                currentUser.First().Username = users.Username;
+            }
+            else if (users.Username == null){
+                currentUser.First().Password = users.Password;
+                currentUser.First().Role = users.Role;
+            }
+            else if(users.Password == null)
+            {
+                currentUser.First().Username = users.Username;
+                currentUser.First().Role = users.Role;
+            }
+            else if(users.Role == null)
+            {
+                currentUser.First().Username = users.Username;
+                currentUser.First().Password = users.Password;
+            }
+            else
+            {
+                currentUser.First().Username = users.Username;
+                currentUser.First().Password = users.Password;
+                currentUser.First().Role = users.Role;
+            }
 
             //_context.Entry(currentUser).State = EntityState.Modified;
 

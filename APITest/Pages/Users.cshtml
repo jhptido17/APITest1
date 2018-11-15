@@ -13,7 +13,8 @@
         <title>Users</title>
     </head>
     <body>
-        <form method="get"> @*asp-action="OnPostShowUsers"*@
+        <h2>Users</h2>
+        <form method="get">
                 @Html.AntiForgeryToken()
                 <button type="submit" asp-page-handler="ShowUsers" class="btn btn-default">View</button>
         </form>

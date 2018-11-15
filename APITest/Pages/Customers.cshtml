@@ -13,7 +13,8 @@
         <title>Customers</title>
     </head>
     <body>
-        <form method="get"> @*asp-action="OnPostShowUsers"*@
+        <h2>Customers</h2>
+        <form method="get">
                 @Html.AntiForgeryToken()
                 <button type="submit" asp-page-handler="ShowCustomers" class="btn btn-default">View</button>
         </form>
@@ -42,6 +43,7 @@
                         <th scope="col">CreateBy</th>
                         <th scope="col">UpdateBy</th>
                         <th scope="col">ImageRoot</th>
+                        @*<th scope="col">Image</th>*@
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
@@ -61,6 +63,11 @@
                             <td>@data.CreatedBy</td>
                             <td>@data.UpdateBy</td>
                             <td>@data.Image</td>
+                            @*<td>
+                                <a href="#" target="_blank">
+                                    <img src=@data.Image alt="Photo" />
+                                </a>
+                            </td>*@
                             <td>
                                 <form method="post" asp-page-handler="ShowImage" asp-route-id="@data.Id">
                                     <button type="submit" class="btn btn-default">ShowPhoto</button>

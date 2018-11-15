@@ -13,6 +13,50 @@
         <title>EditCustomer</title>
     </head>
     <body>
-
+        <form method="post" enctype="multipart/form-data">
+            <div class="row">
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="name" placeholder="Name">
+                </div>
+                <div class="col-md-2">
+                    <input type="text" class="form-control" name="surname" placeholder="Surname">
+                </div>
+                <div>
+                    <input type="file" asp-for="Upload"/>
+                </div>
+                <div class="col">
+                    <button type="submit" asp-page-handler="EditCustomer" asp-route-id=@Model.json.Id class="btn btn-default">Accept</button>
+                </div>
+            </div>
+        </form>
+        @if(Model.json != null)
+        {
+            <table class="table table-dark">
+                <thead>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Surname</th>
+                        <th scope="col">CreatedBy</th>
+                        <th scope="col">UpdatedBy</th>
+                        <th scope="col">ImageRoot</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th scope="row">@Model.json.Id</th>
+                        <td>@Model.json.Name</td>
+                        <td>@Model.json.Surname</td>
+                        <td>@Model.json.CreatedBy</td>
+                        <td>@Model.json.UpdateBy</td>
+                        <td>@Model.json.Image</td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+           <p>Customer not found</p>     
+        }
     </body>
 </html>

@@ -26,11 +26,8 @@ namespace APITest.Pages
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var response = client.GetAsync("customers");
             response.Wait();
@@ -51,17 +48,12 @@ namespace APITest.Pages
             {
                 errorMsg = "name and surname are required";
                 OnGetShowCustomers();
-                //RedirectToPage("/Customers");
-                return;
             }
             var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
             var response = client.PostAsync<Customers>("customers", content, formatter);
@@ -70,13 +62,11 @@ namespace APITest.Pages
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowCustomers();
-                //RedirectToPage("/Users");
             }
             else
             {   
                 errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
                 OnGetShowCustomers();
-                //RedirectToPage("/Users");
             }
         }
 
@@ -84,51 +74,40 @@ namespace APITest.Pages
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             var response = client.DeleteAsync("customers/" + id);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowCustomers();
-                //RedirectToPage("/Users");
             }
             else
             {
                 errorMsg = "Error: Customer not deleted";
-                OnGetShowCustomers();
-                //RedirectToPage("/Users");
+                OnGetShowCustomers();               
             }
-            OnGetShowCustomers();
-            //RedirectToPage("/Users");
+            OnGetShowCustomers();           
         }
 
         public void OnPostDeleteImage(int id)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
             client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             var response = client.DeleteAsync("customersimage/"+id);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
                 errorMsg = response.Result.Content.ReadAsStringAsync().Result;
-                OnGetShowCustomers();
-                //return RedirectToPage("/Customers");   
+                OnGetShowCustomers();   
             }
             else
             {
                 errorMsg = "Error: Photo not deleted";
                 OnGetShowCustomers();
-                //return RedirectToPage("/Customers");
             }
         }
 
@@ -136,21 +115,16 @@ namespace APITest.Pages
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
             client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             var response = client.GetAsync("customersimage/"+id);
             
             if (response.Result.IsSuccessStatusCode)
             {
                 var contentString = response.Result.Content.ReadAsStringAsync().Result.Replace("\\\\","/").Replace("\"","");
-                Console.WriteLine("____________________________Image2: " + contentString);
                 OnGetShowCustomers();
-                
                 return Redirect(contentString);
             }
             errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
@@ -160,31 +134,28 @@ namespace APITest.Pages
 
         public void OnPostAddImage(int id)
         {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
-            byte[] data;
-            using (var br = new BinaryReader(Upload.OpenReadStream()))
-                data = br.ReadBytes((int)Upload.OpenReadStream().Length);
-            ByteArrayContent bytes = new ByteArrayContent(data);
-            MultipartFormDataContent content = new MultipartFormDataContent();
-            content.Add(bytes, "file", Upload.FileName);
-            var response = client.PostAsync("customersimage/"+id, content);
-            if (response.Result.IsSuccessStatusCode)
-            {
-                Console.WriteLine("__________________________________Good Upload: ");
-                errorMsg = "Image Upload to Customer with Id: " + id;
+            if (Upload != null){
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.MaxResponseContentBufferSize = 256000;
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                byte[] data;
+                using (var br = new BinaryReader(Upload.OpenReadStream()))
+                    data = br.ReadBytes((int)Upload.OpenReadStream().Length);
+                ByteArrayContent bytes = new ByteArrayContent(data);
+                MultipartFormDataContent content = new MultipartFormDataContent();
+                content.Add(bytes, "file", Upload.FileName);
+                var response = client.PostAsync("customersimage/"+id, content);
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    errorMsg = "Image Upload to Customer with Id: " + id;
+                    OnGetShowCustomers();
+                }
+                errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
                 OnGetShowCustomers();
-               // return RedirectToPage("/Customers");
             }
-            errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
             OnGetShowCustomers();
-            //return RedirectToPage("/Customers");
         }
     }
 }

@@ -23,9 +23,6 @@ namespace APITest.Pages
         {   
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            //string username = "user1";
-            //string password = "1234";
-            //string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -35,7 +32,6 @@ namespace APITest.Pages
 	        {
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<IEnumerable<Users>>(result);
-                //RedirectToPage("/Users");
 	        }
         }
 
@@ -51,11 +47,8 @@ namespace APITest.Pages
             var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
             var response = client.PostAsync<Users>("users", content, formatter);
@@ -64,13 +57,11 @@ namespace APITest.Pages
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowUsers();
-                //RedirectToPage("/Users");
             }
             else
             {   
                 errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
                 OnGetShowUsers();
-                //RedirectToPage("/Users");
             }
         }
 
@@ -78,26 +69,20 @@ namespace APITest.Pages
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri("https://localhost:5001/api/");
-            string username = "user1";
-            string password = "1234";
-            string encoded = System.Convert.ToBase64String(System.Text.Encoding.GetEncoding("ISO-8859-1").GetBytes(username + ":" + password));
             client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + encoded);
+            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             var response = client.DeleteAsync("users/" + id);
             response.Wait();
             if (response.Result.IsSuccessStatusCode)
             {
                 OnGetShowUsers();
-                //RedirectToPage("/Users");
             }
             else
             {
                 errorMsg = "Error: User not deleted";
                 OnGetShowUsers();
-                //RedirectToPage("/Users");
             }
             OnGetShowUsers();
-            //RedirectToPage("/Users");
         }
     }
 }
