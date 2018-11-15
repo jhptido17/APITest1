@@ -39,16 +39,47 @@ You can access to Controller with the next http path: api/[controllername]
   * CustomersController
     * GET
       * api/customers
+        * Get a list of all customers
       * api/customers/id
+        * Get one customer data found by id
     * POST
       * api/customers
-        * FromBody Post you need add json with next fields: {"Name":"TestCustomer", "Surname":"Test2Customer"}
+        * FromBody Post, you need add json with the next fields: {"Name":"TestCustomer", "Surname":"Test2Customer"}
     * PUT
       * api/customers/id
-        * FromBody Put you need add json with next fields: {"Name":"TestCustomer", "Surname":"Test2Customer"}
+        * FromBody Put, you need add json with the next fields: {"Name":"TestCustomer", "Surname":"Test2Customer"}
     * Delete
       * api/customers/id
+        * Delete a customer by id
       
   * CustomersImageController
+    * GET
+      * api/customersimage/id
+        * Get image path of wwwroot, this path with the root page http path allow you to get the image directly
+    * POST
+      * api/customersimage/id
+        * Post image from IForm using multipart, the image is stored in wwwroot in UserImages directory,
+        * in database is searched by the customer and the path is stored
+    * Delete
+      * api/customersimage/id
+        * Search customer by id and remove the image path from database, and after remove the image from wwwroot/UserImages
+    
   * UsersController
+    * GET
+      * api/users
+        * Get a list of all users
+      * api/users/id
+        * Get one user data found by id
+    * POST
+      * api/users
+    * PUT
+      * api/users/id
+    * Delete
+      * api/users/id
+        * Delete a user by id
+    
   * LoginController
+    * POST
+      * api/login
+        * FromBody Post, you need add json with the next fields: {"Usename":"TestUser", "Password":"TestPassword"}
+        * Only return to you Ok(200) if the user with the Username and Password is in the data base
