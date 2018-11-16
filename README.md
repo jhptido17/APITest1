@@ -75,6 +75,7 @@ You can access to Controller with the next http path: api/[controllername]
         * FromBody Post, you need add json with the next fields: {"Username":"TestUser", "Password":"TestPassword",        "Role":"admin or user if you post other, works but you won't access to API"}
     * PUT
       * api/users/id
+        * FromBody Put, you need add json with the next fields: {"Username":"TestUser", "Password":"TestPassword", "Role":"admin or user if you post other, works but you won't access to API"}
     * Delete
       * api/users/id
         * Delete a user by id
