@@ -54,7 +54,7 @@ namespace APITest.Controllers
 
         //api/CustomersImage/5
         [HttpPost("{id}")]
-        public async Task<IActionResult> PostImage([FromRoute] int id, IFormFile file /*[FromBody] List<IFormFile> files*/)
+        public async Task<IActionResult> PostImage([FromRoute] int id, IFormFile file)
         {
             string [] validFileExtensions = { ".png", ".jpg", ".tiff", ".bmp"};
             
@@ -163,7 +163,7 @@ namespace APITest.Controllers
             }
             catch (Exception ex)
             {  
-                throw;
+                throw ex;
             }
         }
 

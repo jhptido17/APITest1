@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using APITest.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace APITest.Controllers
 {
@@ -17,10 +19,12 @@ namespace APITest.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly TheCRMserviceContext _context;
+         private readonly IHostingEnvironment _hostingEnvironment;
 
-        public CustomersController(TheCRMserviceContext context)
+        public CustomersController(TheCRMserviceContext context,  IHostingEnvironment hostingEnvironment)
         {
             _context = context;
+            _hostingEnvironment = hostingEnvironment;
         }
 
         // GET: api/Customers
@@ -131,11 +135,29 @@ namespace APITest.Controllers
             {
                 return NotFound();
             }
-
+            if (customers.Image != null && customers.Image != "" && customers.Image != " ")
+            {
+                DeleteFile(customers.Image);
+            }
+            
             _context.Customers.Remove(customers);
             await _context.SaveChangesAsync();
 
             return Ok(customers);
+        }
+
+        public void DeleteFile(string imagePath)
+        {
+            imagePath = _hostingEnvironment.WebRootPath + imagePath;
+            string rFileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
+            string rFilePath = ""; //= imagePath.Split("\\")[imagePath.Split("\\").Length - 2];
+            for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
+            {
+                rFilePath = rFilePath + imagePath.Split("\\")[i] + "\\";
+            }
+            string [] dir = Directory.GetFiles(rFilePath, rFileName + "*.*", SearchOption.AllDirectories);
+            Console.WriteLine(dir.First());
+            System.IO.File.Delete(dir.First());
         }
 
         private bool CustomersExists(int id)

@@ -46,7 +46,6 @@
                         <th scope="col">CreateBy</th>
                         <th scope="col">UpdateBy</th>
                         <th scope="col">ImageRoot</th>
-                        @*<th scope="col">Image</th>*@
                         <th scope="col"></th>
                         <th scope="col"></th>
                         <th scope="col"></th>
@@ -69,11 +68,6 @@
                                     <img alt="Photo" />
                                 </a>
                             </td>
-                            @*<td>
-                                <form method="post" asp-page-handler="ShowImage" asp-route-id="@data.Id">
-                                    <button type="submit" class="btn btn-default">ShowPhoto</button>
-                                </form>
-                            </td>*@
                             <td>
                                 <form method="post" enctype= "multipart/form-data" asp-page-handler="AddImage" asp-route-id="@data.Id">
                                     <input type="file" asp-for="Upload"/>

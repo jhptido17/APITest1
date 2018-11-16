@@ -163,27 +163,6 @@ namespace APITest.Pages
             }
         }
 
-        /*public async Task<IActionResult> OnPostShowImage(int id)
-        {
-            var client = new HttpClient();
-            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            var response = client.GetAsync("customersimage/"+id);
-            
-            if (response.Result.IsSuccessStatusCode)
-            {
-                var contentString = response.Result.Content.ReadAsStringAsync().Result.Replace("\\\\","/").Replace("\"","");
-                //OnGetShowCustomers();
-                return Redirect(contentString);
-            }
-            errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
-            //OnGetShowCustomers();
-            return RedirectToPage("/Customers");
-        }*/
-
         public void OnPostAddImage(int id)
         {
             if (Upload != null){
