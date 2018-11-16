@@ -24,7 +24,6 @@ namespace APITest.Controllers
         }
 
         [AllowAnonymous]
-        //[HttpPost("authenticate")]
         [HttpPost]
         public async Task<IActionResult> Authenticate([FromBody] Users userParam)
         {

@@ -38,48 +38,55 @@ namespace APITest.Pages
 	        }
         }
 
-         public ActionResult OnPostEditCustomer(int id)
+         public void OnPostEditCustomer(int id)
         {
             if (Request.Form["name"] == "" && Request.Form["surname"] == "" && Upload == null)
             {
                 errorMsg = "Name, Surname and Image are blank";
-                return RedirectToPage("/Customers");
-            }
-            var content = UpdateContent();
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.MaxResponseContentBufferSize = 256000;
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
-            var response = client.PutAsync<Customers>("customers/"+id, content, formatter);
-            response.Wait();
-            if (response.Result.IsSuccessStatusCode)
-            {
-                if (Upload != null)
-                {
-                    client.DefaultRequestHeaders.Clear();
-                    client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-                    byte[] data;
-                    using (var br = new BinaryReader(Upload.OpenReadStream()))
-                        data = br.ReadBytes((int)Upload.OpenReadStream().Length);
-                    ByteArrayContent bytes = new ByteArrayContent(data);
-                    MultipartFormDataContent ImageContent = new MultipartFormDataContent();
-                    ImageContent.Add(bytes, "file", Upload.FileName);
-                    var Imageresponse = client.PostAsync("customersimage/"+id, ImageContent);
-                    if (Imageresponse.Result.IsSuccessStatusCode)
-                    {
-                        errorMsg = "Image Upload to Customer with Id: " + id;
-                        return RedirectToPage("/Customers");
-                    }
-                }
-                return RedirectToPage("/Customers");
+                //return RedirectToPage("/Customers");
+                OnPostShowCustomer(id);
             }
             else
-            {   
-                errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
-                return RedirectToPage("/Customers");
+            {
+                var content = UpdateContent();
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.MaxResponseContentBufferSize = 256000;
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+                var response = client.PutAsync<Customers>("customers/"+id, content, formatter);
+                response.Wait();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    if (Upload != null)
+                    {
+                        client.DefaultRequestHeaders.Clear();
+                        client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                        byte[] data;
+                        using (var br = new BinaryReader(Upload.OpenReadStream()))
+                            data = br.ReadBytes((int)Upload.OpenReadStream().Length);
+                        ByteArrayContent bytes = new ByteArrayContent(data);
+                        MultipartFormDataContent ImageContent = new MultipartFormDataContent();
+                        ImageContent.Add(bytes, "file", Upload.FileName);
+                        var Imageresponse = client.PostAsync("customersimage/"+id, ImageContent);
+                        if (Imageresponse.Result.IsSuccessStatusCode)
+                        {
+                            errorMsg = "Image Upload to Customer with Id: " + id;
+                            //return RedirectToPage("/Customers");
+                            OnPostShowCustomer(id);
+                        }
+                    }
+                    //return RedirectToPage("/Customers");
+                    OnPostShowCustomer(id);
+                }
+                else
+                {   
+                    errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                    //return RedirectToPage("/Customers");
+                    OnPostShowCustomer(id);
+                }
             }
         }
 

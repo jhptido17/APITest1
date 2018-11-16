@@ -120,7 +120,6 @@ namespace APITest.Controllers
                 return BadRequest(ModelState);
             }
 
-            //long size = files.Sum(f => f.Length);
             long size = file.Length;
             string fileExtension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
 
@@ -137,7 +136,7 @@ namespace APITest.Controllers
                 Directory.CreateDirectory(directory+directoryDB);
             }
 
-            // full path to file in temp location
+            // full path to file, wwwroot and imagesDirectory
             var filePath = Path.Combine(directoryDB, Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
             filePath = filePath + fileExtension;
@@ -163,22 +162,7 @@ namespace APITest.Controllers
                         await file.CopyToAsync(stream);
                     }
                 }
-                /*foreach (var formFile in files)
-                {
-                    if (formFile.Length > 0)
-                    {
-                        using (var stream = new FileStream(filePath, FileMode.Create))
-                        {
-                            await formFile.CopyToAsync(stream);
-                        }
-                    }
-                }*/
-
-                // process uploaded files
-                // Don't rely on or trust the FileName property without validation.
-
                 return Ok(new { size, filePath });
-                /*return Ok(new { count = files.Count, size, filePath});*/
             }
             catch (DbUpdateConcurrencyException)
             {

@@ -34,31 +34,37 @@ namespace APITest.Pages
 	        }
         }
 
-        public ActionResult OnPostEditUser(int id)
+        public void OnPostEditUser(int id)
         {
             if (Request.Form["username"] == "" && Request.Form["password"] == "" && Request.Form["role"] == "")
             {
                 errorMsg = "Username, Password and Role are blank";
-                return RedirectToPage("/Users");
-            }
-            var content = UpdateContent();
-            //var userName = Request.Form["username"];
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
-            var response = client.PutAsync<Users>("users/"+id, content, formatter);
-            response.Wait();
-            if (response.Result.IsSuccessStatusCode)
-            {
-                return RedirectToPage("/Users");
+                //return RedirectToPage("/Users");
+                OnPostShowUser(id);
             }
             else
-            {   
-                errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
-                return RedirectToPage("/Users");
+            {
+                var content = UpdateContent();
+                //var userName = Request.Form["username"];
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+                var response = client.PutAsync<Users>("users/"+id, content, formatter);
+                response.Wait();
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    //return RedirectToPage("/Users");
+                    OnPostShowUser(id);
+                }
+                else
+                {   
+                    errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                    //return RedirectToPage("/Users");
+                    OnPostShowUser(id);
+                }
             }
         }
 

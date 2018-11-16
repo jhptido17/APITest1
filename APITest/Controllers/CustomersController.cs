@@ -27,7 +27,6 @@ namespace APITest.Controllers
         [HttpGet]
         public IEnumerable<Customers> GetCustomers()
         {
-            //Console.WriteLine(User.Identity.Name);
             return _context.Customers;
         }
 
@@ -50,19 +49,6 @@ namespace APITest.Controllers
             return Ok(customers);
         }
 
-        /*public string GetCustomerCreatedBy(int id)
-        {
-            var customerQuery = _context.Customers.Where(x => x.Id == id);
-            if (customerQuery.First().CreatedBy == null)
-            {
-                return null;
-            }
-            Console.WriteLine("createdby " + customerQuery.First().CreatedBy);
-            var createdBy = customerQuery.First().CreatedBy;
-            Console.WriteLine("createdby: " + createdBy);
-            return createdBy;
-        }*/
-
         // PUT: api/Customers/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCustomers([FromRoute] int id, [FromBody] Customers customers)
@@ -71,11 +57,6 @@ namespace APITest.Controllers
             {
                 return BadRequest(ModelState);
             }
-
-            /*if (id != customers.Id)
-            {
-                return BadRequest();
-            }*/
 
             var currentCustomer = _context.Customers.Where(c => c.Id == id);
             if (currentCustomer.First() == null)
@@ -101,8 +82,6 @@ namespace APITest.Controllers
                 currentCustomer.First().Surname = customers.Surname;
                 currentCustomer.First().UpdateBy = User.Identity.Name;
             }
-
-            //_context.Entry(currentCustomer).State = EntityState.Modified;
 
             try
             {
@@ -139,8 +118,6 @@ namespace APITest.Controllers
 
             return CreatedAtAction("GetCustomers", new { id = customers.Id }, customers);
         }
-
-
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]

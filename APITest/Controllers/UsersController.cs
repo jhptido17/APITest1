@@ -116,7 +116,7 @@ namespace APITest.Controllers
             return NoContent();
         }
         
-
+        // POST: api/users
         [HttpPost]
         public async Task<IActionResult> PostUsers([FromBody] Users users)
         {
@@ -131,21 +131,6 @@ namespace APITest.Controllers
 
             return CreatedAtAction("GetUsers", new { id = users.Id }, users);
         }
-
-        // POST: api/users
-        /*[HttpPost]
-        public async Task<IActionResult> PostUsers([FromBody] Users users)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            _context.Users.Add(users);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUsers", new { id = users.Id }, users);
-        }*/
 
         // DELETE: api/users/5
         [HttpDelete("{id}")]

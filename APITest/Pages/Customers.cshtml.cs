@@ -44,29 +44,32 @@ namespace APITest.Pages
 
         public void OnPostCustomers()
         {
-            if(Request.Form["name"] == "" && Request.Form["surname"] == "")
+            if(Request.Form["name"] == "" || Request.Form["surname"] == "")
             {
                 errorMsg = "name and surname are required";
                 OnGetShowCustomers();
             }
-            var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
-            var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
-            client.DefaultRequestHeaders.Accept.Clear();
-            client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
-            var response = client.PostAsync<Customers>("customers", content, formatter);
-            response.Wait();
-
-            if (response.Result.IsSuccessStatusCode)
-            {
-                OnGetShowCustomers();
-            }
             else
-            {   
-                errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
-                OnGetShowCustomers();
+            {
+                var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
+                var client = new HttpClient();
+                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+                var response = client.PostAsync<Customers>("customers", content, formatter);
+                response.Wait();
+
+                if (response.Result.IsSuccessStatusCode)
+                {
+                    OnGetShowCustomers();
+                }
+                else
+                {   
+                    errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                    OnGetShowCustomers();
+                }
             }
         }
 
