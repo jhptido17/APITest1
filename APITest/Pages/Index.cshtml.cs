@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using APITest.Models;
 using System.Net.Http.Formatting;
+using Microsoft.Extensions.Configuration;
 
 namespace APITest.Pages
 {
@@ -17,6 +18,12 @@ namespace APITest.Pages
         public string errorMsg;
         public bool sessionExist = false;
         public Users json;
+        private readonly IConfiguration _configuration;
+
+        public IndexModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public void OnPostLogOut()
         {
@@ -33,7 +40,7 @@ namespace APITest.Pages
             }
             var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"] };
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();

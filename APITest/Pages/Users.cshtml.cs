@@ -11,6 +11,7 @@ using Newtonsoft.Json;
 using APITest.Models;
 using System.Net.Http.Formatting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace APITest.Pages
 {
@@ -18,11 +19,17 @@ namespace APITest.Pages
     {
         public IEnumerable<Users> json;
         public string errorMsg;
+        private readonly IConfiguration _configuration;
+
+        public UsersModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public void OnGetShowUsers()
         {   
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -46,7 +53,7 @@ namespace APITest.Pages
             }
             var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -68,7 +75,7 @@ namespace APITest.Pages
         public void OnPostDeleteUsers(int id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             var response = client.DeleteAsync("users/" + id);

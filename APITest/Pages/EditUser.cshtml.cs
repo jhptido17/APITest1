@@ -10,6 +10,7 @@ using System.Net.Http.Formatting;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Configuration;
 
 namespace APITest.Pages
 {
@@ -17,11 +18,17 @@ namespace APITest.Pages
     {
         public Users json;
         public string errorMsg;
+        private readonly IConfiguration _configuration;
+
+        public EditUserModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
 
         public void OnPostShowUser(int id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -47,7 +54,7 @@ namespace APITest.Pages
                 var content = UpdateContent();
                 //var userName = Request.Form["username"];
                 var client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));

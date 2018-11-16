@@ -11,6 +11,7 @@ using System.Net.Http.Headers;
 using System.IO;
 using Microsoft.AspNetCore.Http;
 using System.Net.Http.Formatting;
+using Microsoft.Extensions.Configuration;
 
 namespace APITest.Pages
 {
@@ -18,14 +19,20 @@ namespace APITest.Pages
     {
         public IEnumerable<Customers> json;
         public string errorMsg;
+        private readonly IConfiguration _configuration;
 
         [BindProperty]
         public IFormFile Upload { get; set; }
 
+        public CustomersModel(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         public void OnGetShowCustomers()
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -53,7 +60,7 @@ namespace APITest.Pages
             {
                 var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
                 var client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -76,7 +83,7 @@ namespace APITest.Pages
         public void OnPostDeleteCustomer(int id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             var response = client.DeleteAsync("customers/" + id);
@@ -96,7 +103,7 @@ namespace APITest.Pages
         public void OnPostDeleteImage(int id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.MaxResponseContentBufferSize = 256000;
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
@@ -117,7 +124,7 @@ namespace APITest.Pages
         public async Task<IActionResult> OnPostShowImage(int id)
         {
             var client = new HttpClient();
-            client.BaseAddress = new Uri("https://localhost:5001/api/");
+            client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();
             client.MaxResponseContentBufferSize = 256000;
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
@@ -127,11 +134,11 @@ namespace APITest.Pages
             if (response.Result.IsSuccessStatusCode)
             {
                 var contentString = response.Result.Content.ReadAsStringAsync().Result.Replace("\\\\","/").Replace("\"","");
-                OnGetShowCustomers();
+                //OnGetShowCustomers();
                 return Redirect(contentString);
             }
             errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
-            OnGetShowCustomers();
+            //OnGetShowCustomers();
             return RedirectToPage("/Customers");
         }
 
@@ -139,7 +146,7 @@ namespace APITest.Pages
         {
             if (Upload != null){
                 var client = new HttpClient();
-                client.BaseAddress = new Uri("https://localhost:5001/api/");
+                client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
                 client.DefaultRequestHeaders.Accept.Clear();
                 client.MaxResponseContentBufferSize = 256000;
                 client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));

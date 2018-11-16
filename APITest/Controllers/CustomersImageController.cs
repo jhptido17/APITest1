@@ -129,7 +129,7 @@ namespace APITest.Controllers
             }
 
             var directory = _hostingEnvironment.WebRootPath;
-            var directoryDB = _configuration.GetSection("ImagesDirectory").Value; ;
+            var directoryDB = _configuration.GetSection("ImagesDirectory").Value;
 
             if (!Directory.Exists(directory+directoryDB))
             {
