@@ -162,8 +162,11 @@ namespace APITest.Pages
                     errorMsg = "Image Upload to Customer with Id: " + id;
                     OnGetShowCustomers();
                 }
-                errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
-                OnGetShowCustomers();
+                else
+                {
+                    errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
+                    OnGetShowCustomers();
+                }
             }
             OnGetShowCustomers();
         }
