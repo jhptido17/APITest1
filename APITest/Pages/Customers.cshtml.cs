@@ -121,7 +121,7 @@ namespace APITest.Pages
             }
         }
 
-        public async Task<IActionResult> OnPostShowImage(int id)
+        /*public async Task<IActionResult> OnPostShowImage(int id)
         {
             var client = new HttpClient();
             client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
@@ -140,7 +140,7 @@ namespace APITest.Pages
             errorMsg = "Error image: " + response.Result.Content.ReadAsStringAsync().Result;
             //OnGetShowCustomers();
             return RedirectToPage("/Customers");
-        }
+        }*/
 
         public void OnPostAddImage(int id)
         {
