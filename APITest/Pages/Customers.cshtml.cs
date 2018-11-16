@@ -58,24 +58,66 @@ namespace APITest.Pages
             }
             else
             {
-                var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
-                var client = new HttpClient();
-                client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
-                client.DefaultRequestHeaders.Accept.Clear();
-                client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
-                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
-                var response = client.PostAsync<Customers>("customers", content, formatter);
-                response.Wait();
-
-                if (response.Result.IsSuccessStatusCode)
+                if (Upload != null)
                 {
-                    OnGetShowCustomers();
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
+                    client.DefaultRequestHeaders.Clear();
+                    client.MaxResponseContentBufferSize = 256000;
+                    client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                    byte[] data;
+                    using (var br = new BinaryReader(Upload.OpenReadStream()))
+                        data = br.ReadBytes((int)Upload.OpenReadStream().Length);
+                    ByteArrayContent bytes = new ByteArrayContent(data);
+                    MultipartFormDataContent ImageContent = new MultipartFormDataContent();
+                    ImageContent.Add(bytes, "file", Upload.FileName);
+                    var Imageresponse = client.PostAsync("customersimage/", ImageContent);
+                    if (Imageresponse.Result.IsSuccessStatusCode)
+                    {
+                        var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"], Image = Imageresponse.Result.Content.ReadAsStringAsync().Result};
+                        client.DefaultRequestHeaders.Clear();
+                        //client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
+                        client.DefaultRequestHeaders.Accept.Clear();
+                        client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                        client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+                        var response = client.PostAsync<Customers>("customers", content, formatter);
+                        response.Wait();
+
+                        if (response.Result.IsSuccessStatusCode)
+                        {
+                            OnGetShowCustomers();
+                        }
+                        else
+                        {   
+                            errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                            OnGetShowCustomers();
+                        }
+                        //return RedirectToPage("/Customers");
+                        OnGetShowCustomers();
+                    }
                 }
                 else
-                {   
-                    errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
-                    OnGetShowCustomers();
+                {
+                    var content = new Customers { Name = Request.Form["name"], Surname = Request.Form["surname"] };
+                    var client = new HttpClient();
+                    client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
+                    client.DefaultRequestHeaders.Accept.Clear();
+                    client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
+                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                    MediaTypeFormatter formatter =  new JsonMediaTypeFormatter();
+                    var response = client.PostAsync<Customers>("customers", content, formatter);
+                    response.Wait();
+
+                    if (response.Result.IsSuccessStatusCode)
+                    {
+                        OnGetShowCustomers();
+                    }
+                    else
+                    {   
+                        errorMsg = "Error: User not added: " + response.Result.Content.ReadAsStringAsync().Result.Replace("\"", "");;
+                        OnGetShowCustomers();
+                    }
                 }
             }
         }

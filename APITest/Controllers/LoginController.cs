@@ -19,7 +19,6 @@ namespace APITest.Controllers
 
         public LoginController(IUserService userService)
         {
-            Console.WriteLine("djslfjalsdjfljsljjlsdjlfjlsjafl");
             _userService = userService;
         }
 

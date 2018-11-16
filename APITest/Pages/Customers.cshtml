@@ -18,13 +18,16 @@
                 @Html.AntiForgeryToken()
                 <button type="submit" asp-page-handler="ShowCustomers" class="btn btn-default">View</button>
         </form>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-2">
                     <input type="text" class="form-control" name="name" placeholder="Name">
                 </div>
                 <div class="col-md-2">
                     <input type="text" class="form-control" name="surname" placeholder="Surname">
+                </div>
+                <div>
+                    <input type="file" asp-for="Upload"/>
                 </div>
                 <div class="col">
                     <button type="submit" asp-page-handler="Customers" class="btn btn-default">Add</button>

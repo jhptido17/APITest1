@@ -53,66 +53,9 @@ namespace APITest.Controllers
         }
 
         //api/CustomersImage/5
-        /*[HttpGet("{id}")]
-        public async Task<IActionResult> GetImage([FromRoute] int id)
-        {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
-            var currentCustomer = _context.Customers.Where(c => c.Id == id);
-
-            if (currentCustomer.First() == null)
-                return BadRequest();
-
-            string imagePath = currentCustomer.First().Image; 
-
-            if (imagePath == null || imagePath == "")
-            {
-                return Content("No image");
-            }
-      
-            Console.WriteLine(Directory.GetCurrentDirectory());
-            string fileName = imagePath.Split("\\")[imagePath.Split("\\").Length - 1];
-            string filePath = ""; //= imagePath.Split("\\")[imagePath.Split("\\").Length - 2];
-            for (int i = 0; i < imagePath.Split("\\").Length - 2; i++)
-            {
-                filePath = filePath + imagePath.Split("\\")[i] + "\\";
-            }
-
-            string [] dir = Directory.GetFiles(filePath, fileName + "*.*", SearchOption.AllDirectories);
-
-            if (dir == null)
-            {
-                return NoContent();
-            }
-
-            //string [] dir = Directory.GetFiles(imagePath, "*png");
-
-            var memory = new MemoryStream();
-            using (var stream = new FileStream(dir.First(), FileMode.Open))
-            {
-                await stream.CopyToAsync(memory);
-            }
-            memory.Position = 0;
-            return File(memory, GetContentType(dir.First()), Path.GetFileName(dir.First()));
-
-            //return _context.Customers;
-        }
-
-        private string GetContentType(string file)
-        {
-            var fileExtension = "." +file.Split('.')[file.Split('.').Length - 1];
-            Console.WriteLine("image/" + fileExtension.TrimStart('.'));
-            return "image/" + fileExtension.TrimStart('.');
-        }*/
-
-        //api/CustomersImage/5
         [HttpPost("{id}")]
         public async Task<IActionResult> PostImage([FromRoute] int id, IFormFile file /*[FromBody] List<IFormFile> files*/)
         {
-            Console.WriteLine("." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1]);
             string [] validFileExtensions = { ".png", ".jpg", ".tiff", ".bmp"};
             
             if (!ModelState.IsValid)
@@ -174,6 +117,54 @@ namespace APITest.Controllers
                 {
                     throw;
                 }
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> PostImg( IFormFile file )
+        {
+            string [] validFileExtensions = { ".png", ".jpg", ".tiff", ".bmp"};
+            
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            long size = file.Length;
+            string fileExtension = "." + file.FileName.Split('.')[file.FileName.Split('.').Length - 1];
+
+            if (!validFileExtensions.Contains(fileExtension))
+            {
+                return NoContent();
+            }
+
+            var directory = _hostingEnvironment.WebRootPath;
+            var directoryDB = _configuration.GetSection("ImagesDirectory").Value;
+
+            if (!Directory.Exists(directory+directoryDB))
+            {
+                Directory.CreateDirectory(directory+directoryDB);
+            }
+
+            // full path to file, wwwroot and imagesDirectory
+            var filePath = Path.Combine(directoryDB, Path.GetRandomFileName());
+            filePath = filePath.Split('.')[filePath.Split('.').Length-2];
+            filePath = filePath + fileExtension;
+            try
+            {
+                await _context.SaveChangesAsync();
+                if (file.Length > 0)
+                {
+                    using (var stream = new FileStream(directory + filePath, FileMode.Create))
+                    {
+                        await file.CopyToAsync(stream);
+                    }
+                }
+                return Ok(filePath);
+            }
+            catch (DbUpdateConcurrencyException)
+            {  
+                throw;
             }
         }
 

@@ -82,7 +82,6 @@ namespace APITest.Controllers
                 currentCustomer.First().Surname = customers.Surname;
                 currentCustomer.First().UpdateBy = User.Identity.Name;
             }
-
             try
             {
                 await _context.SaveChangesAsync();
@@ -98,7 +97,6 @@ namespace APITest.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 

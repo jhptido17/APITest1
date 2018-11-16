@@ -36,10 +36,8 @@ namespace APITest.Helpers
             try
             {
                 var authHeader = AuthenticationHeaderValue.Parse(Request.Headers["Authorization"]);
-                Console.WriteLine("-------------------------------AuthHeader: " + authHeader + " -------------------------");
                 var credentialBytes = Convert.FromBase64String(authHeader.Parameter);
                 var credentials = Encoding.UTF8.GetString(credentialBytes).Split(':');
-                Console.WriteLine("-------------------------Credentials: " + credentials[0] + " -----------------------");
                 var username = credentials[0];
                 var password = credentials[1];
                 user = await _userService.Authenticate(username, password);
@@ -51,7 +49,6 @@ namespace APITest.Helpers
 
             if (user == null)
                 return AuthenticateResult.Fail("Invalid Username or Password");
-            Console.WriteLine(user.Role + "sdljflsjflsdkjflksdjf¡dskfjl");
             var claims = new[] {
                 new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 new Claim(ClaimTypes.Name, user.Username),
@@ -59,9 +56,7 @@ namespace APITest.Helpers
             };
             var identity = new ClaimsIdentity(claims, Scheme.Name);
             var principal = new ClaimsPrincipal(identity);
-            Console.WriteLine("------------------------- " + principal.IsInRole("admin") + " ----------------------------------------");
             var ticket = new AuthenticationTicket(principal, Scheme.Name);
-            Console.WriteLine("___________ "+ticket.Principal.IsInRole("admin")+ " __________");
             return AuthenticateResult.Success(ticket);
         }
     }
