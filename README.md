@@ -72,6 +72,7 @@ You can access to Controller with the next http path: api/[controllername]
         * Get one user data found by id
     * POST
       * api/users
+        * FromBody Post, you need add json with the next fields: {"Username":"TestUser", "Password":"TestPassword",        "Role":"admin or user if you post other, works but you won't access to API"}
     * PUT
       * api/users/id
     * Delete
