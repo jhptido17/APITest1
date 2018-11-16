@@ -152,7 +152,6 @@ namespace APITest.Controllers
             filePath = filePath + fileExtension;
             try
             {
-                await _context.SaveChangesAsync();
                 if (file.Length > 0)
                 {
                     using (var stream = new FileStream(directory + filePath, FileMode.Create))
@@ -162,7 +161,7 @@ namespace APITest.Controllers
                 }
                 return Ok(filePath);
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {  
                 throw;
             }
