@@ -21,8 +21,22 @@
                 <div class="col-md-2">
                     <input type="text" class="form-control" name="password" placeholder="Password">
                 </div>
-                <div class="col-md-2">
+                @*<div class="col-md-2">
                     <input type="text" class="form-control" name="role" placeholder="Role">
+                </div>*@
+                <div class="form-group">
+                    @Html.DropDownList("roleValue", 
+                        new SelectList(
+                            new List<Object>{ 
+                                new { value = "admin" , text = "admin"  },
+                                new { value = "user" , text = "user" }
+                            
+                            },
+                            "value",
+                            "text",
+                            2),
+                        "Select Role",
+                        new { @class = "form-control" })
                 </div>
                 <div class="col">
                     <button type="submit" asp-page-handler="EditUser" asp-route-id=@Model.json.Id class="btn btn-default">Edit</button>

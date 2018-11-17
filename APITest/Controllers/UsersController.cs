@@ -24,8 +24,9 @@ namespace APITest.Controllers
 
         // GET: api/users
         [HttpGet]
-        public IEnumerable<Users> GetUsers()
+        public IEnumerable<Users> GetUsers(int page = 1, int rows = 10)
         {
+            //return _context.Users.Skip((page-1) * rows).Take(rows).ToList();
             return _context.Users;
         }
 
@@ -58,41 +59,41 @@ namespace APITest.Controllers
             }  
             if((_context.Users.Where(c => c.Id != id && c.Username == users.Username)).Count() > 0)
                 return BadRequest("Username Already Used");
-            var currentUser = _context.Users.Where(c => c.Id == id);
-            if (currentUser.First() == null)
+            var currentUser = await _context.Users.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (currentUser == null)
                 return BadRequest();
             
-            if (users.Username == null && users.Password == null)
+            if (String.IsNullOrEmpty(users.Username) && String.IsNullOrEmpty(users.Password))
             {
-                currentUser.First().Role = users.Role;
+                currentUser.Role = users.Role;
             }
-            else if(users.Username == null && users.Role == null)
+            else if(String.IsNullOrEmpty(users.Username) && String.IsNullOrEmpty(users.Role))
             {
-                currentUser.First().Password = users.Password;
+                currentUser.Password = users.Password;
             }
-            else if (users.Password == null && users.Role == null)
+            else if (String.IsNullOrEmpty(users.Password) && String.IsNullOrEmpty(users.Role))
             {
-                currentUser.First().Username = users.Username;
+                currentUser.Username = users.Username;
             }
-            else if (users.Username == null){
-                currentUser.First().Password = users.Password;
-                currentUser.First().Role = users.Role;
+            else if (String.IsNullOrEmpty(users.Username)){
+                currentUser.Password = users.Password;
+                currentUser.Role = users.Role;
             }
-            else if(users.Password == null)
+            else if(String.IsNullOrEmpty(users.Password))
             {
-                currentUser.First().Username = users.Username;
-                currentUser.First().Role = users.Role;
+                currentUser.Username = users.Username;
+                currentUser.Role = users.Role;
             }
-            else if(users.Role == null)
+            else if(String.IsNullOrEmpty(users.Role))
             {
-                currentUser.First().Username = users.Username;
-                currentUser.First().Password = users.Password;
+                currentUser.Username = users.Username;
+                currentUser.Password = users.Password;
             }
             else
             {
-                currentUser.First().Username = users.Username;
-                currentUser.First().Password = users.Password;
-                currentUser.First().Role = users.Role;
+                currentUser.Username = users.Username;
+                currentUser.Password = users.Password;
+                currentUser.Role = users.Role;
             }
 
             //_context.Entry(currentUser).State = EntityState.Modified;

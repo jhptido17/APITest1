@@ -44,14 +44,16 @@ namespace APITest.Pages
 
         public void OnPostUsers()
         {
-            if(Request.Form["username"] == "" && Request.Form["password"] == "" && Request.Form["role"] == "")
+            //if(Request.Form["username"] == "" && Request.Form["password"] == "" && Request.Form["role"] == "")
+            if(Request.Form["username"] == "" || Request.Form["password"] == "" || Request.Form["roleValue"] == "")
             {
                 errorMsg = "Username, Password and Role are blank";
                 OnGetShowUsers();
                 RedirectToPage("/Users");
                 return;
             }
-            var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
+            //var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
+            var content = new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["roleValue"], Status = null };
             var client = new HttpClient();
             client.BaseAddress = new Uri(_configuration.GetSection("APIUri").Value);
             client.DefaultRequestHeaders.Accept.Clear();

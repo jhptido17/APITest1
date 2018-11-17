@@ -38,16 +38,16 @@ namespace APITest.Controllers
                 return BadRequest(ModelState);
             }
 
-            var currentCustomer = _context.Customers.Where(c => c.Id == id);
+            var currentCustomer = await _context.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
 
-            if (currentCustomer.First() == null)
+            if (currentCustomer == null)
                 return BadRequest();
 
-            string imagePath = currentCustomer.First().Image;
+            string imagePath = currentCustomer.Image;
 
             if (imagePath == null || imagePath == "")
             {
-                return Content("No image");
+                return NotFound();
             }
             return Ok(imagePath);
         }
@@ -83,17 +83,17 @@ namespace APITest.Controllers
             var filePath = Path.Combine(directoryDB, Path.GetRandomFileName());
             filePath = filePath.Split('.')[filePath.Split('.').Length-2];
             filePath = filePath + fileExtension;
-            var currentCustomer = _context.Customers.Where(c => c.Id == id);
-            if (currentCustomer.First() == null)
+            var currentCustomer = await _context.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (currentCustomer == null)
                 return BadRequest();
 
-            if (currentCustomer.First().Image != "" && currentCustomer.First().Image != " " && currentCustomer.First().Image != null)
+            if (String.IsNullOrEmpty(currentCustomer.Image) && String.IsNullOrWhiteSpace(currentCustomer.Image))
             {
-                DeleteFile(currentCustomer.First().Image);
+                DeleteFile(currentCustomer.Image);
             }
 
-            currentCustomer.First().UpdateBy = User.Identity.Name;
-            currentCustomer.First().Image = filePath;
+            currentCustomer.UpdateBy = User.Identity.Name;
+            currentCustomer.Image = filePath;
 
             try
             {
@@ -175,16 +175,16 @@ namespace APITest.Controllers
                 return BadRequest(ModelState);
             }
 
-            var currentCustomer = _context.Customers.Where(c => c.Id == id);
-            if (currentCustomer.First() == null)
+            var currentCustomer = await _context.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (currentCustomer == null)
                 return BadRequest();
 
             try
             { 
-                if (currentCustomer.First().Image != "" && currentCustomer.First().Image != " " && currentCustomer.First().Image != null)
+                if (String.IsNullOrEmpty(currentCustomer.Image) && String.IsNullOrWhiteSpace(currentCustomer.Image))
                 {
-                    string imagePath = currentCustomer.First().Image;
-                    currentCustomer.First().Image = null;
+                    string imagePath = currentCustomer.Image;
+                    currentCustomer.Image = null;
                     await _context.SaveChangesAsync();
                     DeleteFile(imagePath);
                     return Ok("Image removed");

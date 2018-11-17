@@ -39,11 +39,14 @@ namespace APITest.Pages
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<Users>(result);
 	        }
+            ViewData["username"] = json.Username;
+            ViewData["password"] = "Doe";
+            ViewData["roleValue"] = "checked"; 
         }
 
         public void OnPostEditUser(int id)
         {
-            if (Request.Form["username"] == "" && Request.Form["password"] == "" && Request.Form["role"] == "")
+            if (Request.Form["username"] == "" && Request.Form["password"] == "" && Request.Form["roleValue"] == "")
             {
                 errorMsg = "Username, Password and Role are blank";
                 //return RedirectToPage("/Users");
@@ -77,31 +80,31 @@ namespace APITest.Pages
 
         public Users UpdateContent()
         {   
-            if (Request.Form["password"] == "" && Request.Form["role"] == "")
+            if (Request.Form["password"] == "" && Request.Form["roleValue"] == "")
             {
                 return new Users { Username = Request.Form["username"], Status = null };
             }
-            if (Request.Form["username"] == "" && Request.Form["role"] == "")
+            if (Request.Form["username"] == "" && Request.Form["roleValue"] == "")
             {
                 return new Users { Password = Request.Form["password"], Status = null };
             }
             if (Request.Form["username"] == "" && Request.Form["password"] == "")
             {
-                return new Users { Role = Request.Form["role"], Status = null };
+                return new Users { Role = Request.Form["roleValue"], Status = null };
             }
             if (Request.Form["username"] == "")
             {
-                return new Users { Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
+                return new Users { Password = Request.Form["password"], Role = Request.Form["roleValue"], Status = null };
             }
             if (Request.Form["password"] == "")
             {
-                return new Users { Username = Request.Form["username"], Role = Request.Form["role"], Status = null };
+                return new Users { Username = Request.Form["username"], Role = Request.Form["roleValue"], Status = null };
             }
-            if (Request.Form["role"] == "")
+            if (Request.Form["roleValue"] == "")
             {
                 return new Users { Username = Request.Form["username"], Password = Request.Form["password"], Status = null };
             }
-            return new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["role"], Status = null };
+            return new Users { Username = Request.Form["username"], Password = Request.Form["password"], Role = Request.Form["roleValue"], Status = null };
         }
     }
 }

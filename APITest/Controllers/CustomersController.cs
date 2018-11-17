@@ -29,8 +29,9 @@ namespace APITest.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public IEnumerable<Customers> GetCustomers()
+        public IEnumerable<Customers> GetCustomers(int page = 1, int rows = 10)
         {
+            //return _context.Customers.Skip((page-1) * rows).Take(rows).ToList();
             return _context.Customers;
         }
 
@@ -62,29 +63,29 @@ namespace APITest.Controllers
                 return BadRequest(ModelState);
             }
 
-            var currentCustomer = _context.Customers.Where(c => c.Id == id);
-            if (currentCustomer.First() == null)
+            var currentCustomer = await _context.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
+            if (currentCustomer == null)
                 return BadRequest();
 
             if (customers.Name == null && customers.Surname == null)
             {
-                currentCustomer.First().UpdateBy = User.Identity.Name;
+                currentCustomer.UpdateBy = User.Identity.Name;
             }
             else if(customers.Name == null && customers.Surname != null)
             {
-                currentCustomer.First().Surname = customers.Surname;
-                currentCustomer.First().UpdateBy = User.Identity.Name;
+                currentCustomer.Surname = customers.Surname;
+                currentCustomer.UpdateBy = User.Identity.Name;
             }
             else if(customers.Surname == null && customers.Name != null)
             {
-                currentCustomer.First().Name = customers.Name;
-                currentCustomer.First().UpdateBy = User.Identity.Name;
+                currentCustomer.Name = customers.Name;
+                currentCustomer.UpdateBy = User.Identity.Name;
             }
             else
             {
-                currentCustomer.First().Name = customers.Name;
-                currentCustomer.First().Surname = customers.Surname;
-                currentCustomer.First().UpdateBy = User.Identity.Name;
+                currentCustomer.Name = customers.Name;
+                currentCustomer.Surname = customers.Surname;
+                currentCustomer.UpdateBy = User.Identity.Name;
             }
             try
             {
@@ -135,7 +136,7 @@ namespace APITest.Controllers
             {
                 return NotFound();
             }
-            if (customers.Image != null && customers.Image != "" && customers.Image != " ")
+            if (String.IsNullOrEmpty(customers.Image) && String.IsNullOrWhiteSpace(customers.Image))
             {
                 DeleteFile(customers.Image);
             }
