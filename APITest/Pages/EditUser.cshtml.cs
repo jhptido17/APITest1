@@ -40,8 +40,8 @@ namespace APITest.Pages
                 json = JsonConvert.DeserializeObject<Users>(result);
 	        }
             ViewData["username"] = json.Username;
-            ViewData["password"] = "Doe";
-            ViewData["roleValue"] = "checked"; 
+            ViewData["password"] = json.Password;
+            ViewData["roleValue"] = json.Role; 
         }
 
         public void OnPostEditUser(int id)
