@@ -57,8 +57,15 @@ namespace APITest.Controllers
             {
                 return BadRequest(ModelState);
             }  
+
             if((_context.Users.Where(c => c.Id != id && c.Username == users.Username)).Count() > 0)
                 return BadRequest("Username Already Used");
+
+            /*if (_context.Users.Any(u => u.Id == id))
+            {
+                return NotFound();
+            }*/
+
             var currentUser = await _context.Users.Where(c => c.Id == id).FirstOrDefaultAsync();
             if (currentUser == null)
                 return BadRequest();

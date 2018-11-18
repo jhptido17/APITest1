@@ -63,6 +63,14 @@ namespace APITest.Controllers
                 return BadRequest(ModelState);
             }
 
+            /*if(_context.Customers.Any(c => c.Id == id))
+            {
+                return NotFound();
+            }
+
+            _context.Customers.Update(customers);
+            await _context.SaveChangesAsync();*/
+
             var currentCustomer = await _context.Customers.Where(c => c.Id == id).FirstOrDefaultAsync();
             if (currentCustomer == null)
                 return BadRequest();
