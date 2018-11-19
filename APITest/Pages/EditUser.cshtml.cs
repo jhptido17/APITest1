@@ -41,14 +41,13 @@ namespace APITest.Pages
 	        {
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<Users>(result);
+                username = json.Username;
+                password = json.Password;
+                roleValue = json.Role;
 	        }
             //ViewData["username"] = json.Username;
             //ViewData["password"] = json.Password;
-            //ViewData["roleValue"] = json.Role; 
-            username = json.Username;
-            password = json.Password;
-            roleValue = json.Role;
-
+            //ViewData["roleValue"] = json.Role;   
         }
 
         public void OnPostEditUser(int id)

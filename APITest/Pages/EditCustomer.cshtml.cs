@@ -23,6 +23,8 @@ namespace APITest.Pages
 
         [BindProperty]
         public IFormFile Upload { get; set; }
+        public string name { get; set; }
+        public string surname { get; set; }
 
         public EditCustomerModel(IConfiguration configuration)
         {
@@ -42,6 +44,8 @@ namespace APITest.Pages
 	        {
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<Customers>(result);
+                name = json.Name;
+                surname = json.Surname;
 	        }
         }
 

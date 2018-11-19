@@ -16,10 +16,10 @@
         <form method="post" enctype="multipart/form-data">
             <div class="row">
                 <div class="col-md-2">
-                    <input type="text" class="form-control" name="name" placeholder="Name">
+                    <input type="text" class="form-control" name="name" asp-for="name">
                 </div>
                 <div class="col-md-2">
-                    <input type="text" class="form-control" name="surname" placeholder="Surname">
+                    <input type="text" class="form-control" name="surname" asp-for="surname">
                 </div>
                 <div>
                     <input type="file" asp-for="Upload"/>
