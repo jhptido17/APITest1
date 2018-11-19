@@ -33,6 +33,9 @@ namespace APITest.Pages
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Add("Authorization", "Basic " + HttpContext.Session.GetString("Authentication"));
             client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            //api/users?page=1&rows=10
+            //HttpContext.Session.GetString("page");
+            //HttpContext.Session.GetString("rows");
             var response = client.GetAsync("users");
             response.Wait();
             if (response.Result.IsSuccessStatusCode)

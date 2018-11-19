@@ -24,10 +24,10 @@ namespace APITest.Controllers
 
         // GET: api/users
         [HttpGet]
-        public IEnumerable<Users> GetUsers(int page = 1, int rows = 10)
+        public IEnumerable<Users> GetUsers(int page = 1, int rows = 5)
         {
-            //return _context.Users.Skip((page-1) * rows).Take(rows).ToList();
-            return _context.Users;
+            return _context.Users.Skip((page-1) * rows).Take(rows).ToList();
+            //return _context.Users;
         }
 
         // GET: api/users/5
