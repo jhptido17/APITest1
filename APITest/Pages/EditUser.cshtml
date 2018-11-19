@@ -16,26 +16,24 @@
         <form method="post">
             <div class="row">
                 <div class="col-md-2">
-                    <input type="text" class="form-control" name="username" placeholder="Username">
+                    <input type="text" class="form-control" name="username" asp-for="username">
                 </div>
                 <div class="col-md-2">
-                    <input type="text" class="form-control" name="password" placeholder="Password">
+                    <input type="password" class="form-control" name="password" asp-for="password">
                 </div>
                 @*<div class="col-md-2">
                     <input type="text" class="form-control" name="role" placeholder="Role">
                 </div>*@
                 <div class="form-group">
-                    @Html.DropDownList("roleValue", 
+                    @Html.DropDownList("roleValue",
                         new SelectList(
-                            new List<Object>{ 
-                                new { value = "admin" , text = "admin"  },
-                                new { value = "user" , text = "user" }
-                            
+                            new List<Object>{
+                                Model.roleValue == "user" ? new { value = "admin" , text = "admin"  }: new { value = "user" , text = "user" },
                             },
                             "value",
                             "text",
                             2),
-                        "Select Role",
+                        Model.roleValue == null ? "Select Role" : Model.roleValue,
                         new { @class = "form-control" })
                 </div>
                 <div class="col">

@@ -19,6 +19,9 @@ namespace APITest.Pages
         public Users json;
         public string errorMsg;
         private readonly IConfiguration _configuration;
+        public string username { get; set; }
+        public string password { get; set; }
+        public string roleValue { get; set; }
 
         public EditUserModel(IConfiguration configuration)
         {
@@ -39,9 +42,13 @@ namespace APITest.Pages
 		        var result = response.Result.Content.ReadAsStringAsync().Result;
                 json = JsonConvert.DeserializeObject<Users>(result);
 	        }
-            ViewData["username"] = json.Username;
-            ViewData["password"] = json.Password;
-            ViewData["roleValue"] = json.Role; 
+            //ViewData["username"] = json.Username;
+            //ViewData["password"] = json.Password;
+            //ViewData["roleValue"] = json.Role; 
+            username = json.Username;
+            password = json.Password;
+            roleValue = json.Role;
+
         }
 
         public void OnPostEditUser(int id)
